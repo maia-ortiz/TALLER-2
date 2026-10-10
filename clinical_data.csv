@@ -1,0 +1,101 @@
+ID,Edad,Género,Diagnóstico,Frecuencia_Cardiaca,PAM,Glucosa,Observaciones
+P001,22,M,Sano,68,95,87,Sin alteraciones detectadas
+P002,24,F,Sano,70,92,90,Valores dentro del rango normal
+P003,27,M,Sano,72,94,85,Frecuencia cardíaca estable
+P004,29,F,Sano,74,96,88,Paciente asintomático
+P005,31,M,Sano,69,97,92,Sin antecedentes clínicos
+P006,33,F,Sano,71,93,86,Presión normal
+P007,35,M,Sano,73,99,91,Sin irregularidades
+P008,37,F,Sano,75,98,89,Control de rutina normal
+P009,39,M,Sano,67,96,87,Frecuencia estable
+P010,41,F,Sano,70,97,90,Valores normales
+P011,68,F,Sano,74,92,85,Sin alteraciones
+P012,49,F,Sano,75,98,90,ECG normal
+P013,80,F,Sano,74,98,93,Frecuencia estable
+P014,77,M,Sano,65,98,90,Frecuencia estable
+P015,21,M,Sano,69,92,88,Sin alteraciones
+P016,35,M,Sano,73,95,88,Sin alteraciones
+P017,33,F,Sano,71,94,90,Presión normal
+P018,40,M,Sano,68,97,85,Presión normal
+P019,82,F,Sano,71,92,87,Sin alteraciones
+P020,64,M,Sano,75,93,85,Sin alteraciones
+P021,64,F,Sano,67,96,85,Frecuencia estable
+P022,65,M,Sano,65,96,91,Presión normal
+P023,67,M,Sano,75,92,89,Presión normal
+P024,23,M,Sano,65,98,90,Sin alteraciones
+P025,49,M,Sano,68,99,85,Sin alteraciones
+P026,28,M,Sano,65,93,87,Frecuencia estable
+P027,33,M,Sano,73,95,89,Sin alteraciones
+P028,79,M,Sano,70,95,91,Frecuencia estable
+P029,40,M,Sano,74,93,95,Sin alteraciones
+P030,76,M,Sano,72,94,86,Sin alteraciones
+P031,37,M,Sano,70,94,92,ECG normal
+P032,79,M,Sano,71,95,91,Sin alteraciones
+P033,69,M,Sano,67,97,85,ECG normal
+P034,61,M,Sano,70,99,93,ECG normal
+P035,31,M,Sano,65,99,90,ECG normal
+P036,29,F,Sano,75,99,87,Presión normal
+P037,55,F,Sano,74,92,85,Presión normal
+P038,51,F,Sano,72,95,87,Frecuencia estable
+P039,81,F,Sano,72,97,89,Presión normal
+P040,84,F,Sano,73,94,87,Frecuencia estable
+P041,31,F,Sano,67,99,92,ECG normal
+P042,28,F,Sano,65,98,85,Presión normal
+P043,49,M,Sano,65,93,85,Sin alteraciones
+P044,59,F,Sano,72,99,85,ECG normal
+P045,65,F,Sano,69,98,94,Sin alteraciones
+P046,39,F,Sano,71,99,95,Presión normal
+P047,56,M,Sano,66,98,90,Frecuencia estable
+P048,34,F,Sano,67,98,87,Frecuencia estable
+P049,41,M,Sano,65,93,89,Frecuencia estable
+P050,43,M,Sano,69,97,88,Sin alteraciones
+P051,58,M,Taquicardia,117,81,108,Ritmo acelerado
+P052,75,M,Taquicardia,128,81,105,Alta actividad eléctrica
+P053,23,F,Taquicardia,123,85,113,Presión baja compensada
+P054,32,F,Taquicardia,122,84,102,Alta actividad eléctrica
+P055,44,M,Taquicardia,119,83,101,Presión baja compensada
+P056,62,M,Taquicardia,125,85,111,Taquicardia sinusal
+P057,53,F,Taquicardia,116,81,106,Presión baja compensada
+P058,67,M,Taquicardia,118,81,103,Taquicardia sinusal
+P059,48,M,Taquicardia,125,80,107,Alta actividad eléctrica
+P060,37,M,Taquicardia,116,81,111,Taquicardia sinusal
+P061,47,F,Taquicardia,123,83,99,Presión baja compensada
+P062,72,F,Taquicardia,124,83,104,Presión baja compensada
+P063,69,M,Taquicardia,120,84,110,Ritmo acelerado
+P064,76,M,Taquicardia,116,84,109,Taquicardia sinusal
+P065,58,M,Taquicardia,127,81,105,Taquicardia sinusal
+P066,60,M,Taquicardia,122,83,110,Ritmo acelerado
+P067,54,M,Taquicardia,130,84,101,Ritmo acelerado
+P068,29,F,Taquicardia,118,81,107,Taquicardia sinusal
+P069,48,M,Taquicardia,130,80,107,Alta actividad eléctrica
+P070,41,F,Taquicardia,119,84,109,Presión baja compensada
+P071,62,M,Taquicardia,128,84,100,Taquicardia sinusal
+P072,58,F,Taquicardia,122,82,113,Taquicardia sinusal
+P073,46,F,Taquicardia,131,83,100,Alta actividad eléctrica
+P074,39,F,Taquicardia,130,85,113,Presión baja compensada
+P075,51,F,Taquicardia,129,82,109,Ritmo acelerado
+P076,83,M,Taquicardia,131,83,112,Alta actividad eléctrica
+P077,48,M,Taquicardia,118,80,109,Ritmo acelerado
+P078,81,M,Taquicardia,120,84,111,Alta actividad eléctrica
+P079,68,F,Taquicardia,131,84,109,Alta actividad eléctrica
+P080,25,F,Taquicardia,123,82,103,Taquicardia sinusal
+P081,41,M,Taquicardia,129,83,101,Presión baja compensada
+P082,23,M,Taquicardia,119,85,106,Taquicardia sinusal
+P083,27,F,Taquicardia,125,84,111,Ritmo acelerado
+P084,34,M,Taquicardia,128,81,104,Ritmo acelerado
+P085,59,M,Taquicardia,130,84,101,Ritmo acelerado
+P086,84,M,Taquicardia,128,85,106,Alta actividad eléctrica
+P087,56,F,Taquicardia,117,81,109,Alta actividad eléctrica
+P088,84,M,Taquicardia,126,84,102,Ritmo acelerado
+P089,84,F,Taquicardia,125,83,108,Taquicardia sinusal
+P090,43,M,Taquicardia,116,85,111,Ritmo acelerado
+P091,48,F,Taquicardia,121,81,101,Alta actividad eléctrica
+P092,30,F,Taquicardia,124,83,104,Presión baja compensada
+P093,81,F,Taquicardia,116,82,101,Presión baja compensada
+P094,81,M,Taquicardia,126,85,105,Presión baja compensada
+P095,72,M,Taquicardia,124,85,112,Taquicardia sinusal
+P096,62,F,Taquicardia,122,80,105,Presión baja compensada
+P097,73,F,Taquicardia,124,80,108,Alta actividad eléctrica
+P098,27,M,Taquicardia,129,83,109,Taquicardia sinusal
+P099,60,F,Taquicardia,120,82,111,Alta actividad eléctrica
+P100,76,M,Taquicardia,131,85,104,Alta actividad eléctrica
