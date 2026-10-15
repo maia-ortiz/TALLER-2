@@ -272,3 +272,36 @@ def procesar_imagen():
     plt.subtitle("Transformaciones aplicadas a un corte de resonancia magnética", fontsize=14)
     plt.tight_layout()
     plt.show()
+
+# Punto 4
+def mostrar_resumen(est, fc_s, fc_t, fc_csv, corr):
+    print("=" * 70)
+    print("RESUMEN PARA LAS CONCLUSIONES")
+    print("=" * 70)
+    print(f"ECG sano:        media = {est['sano']['media']:.3f} mV, "
+          f"desv. = {est['sano']['desv_std']:.3f} mV, FC = {fc_s:.0f} lpm")
+    print(f"ECG taquicardia: media = {est['taquicardia']['media']:.3f} mV, "
+          f"desv. = {est['taquicardia']['desv_std']:.3f} mV, FC = {fc_t:.0f} lpm")
+    print(f"FC promedio en CSV -> Sano: {fc_csv['Sano']:.0f} lpm | "
+          f"Taquicardia: {fc_csv['Taquicardia']:.0f} lpm")
+    print(f"Correlación FC-PAM: {corr.loc['Frecuencia_Cardiaca', 'PAM']:.2f} | "
+          f"FC-Glucosa: {corr.loc['Frecuencia_Cardiaca', 'Glucosa']:.2f}")
+
+def main():
+    df, corr, fc_csv = analizar_csv()
+    est, fc_s, fc_t = procesar_ecg(fc_csv)
+    procesar_imagen()
+    mostrar_resumen(est, fc_s, fc_t, fc_csv, corr)
+
+if __name__ == "__main__":
+    main()
+
+# CONCLUSIONES
+#
+# Diferencias observadas entre las señales ECG (sano vs taquicardia):
+# El ECG de taquicardia tiene casi el doble de latidos en los mismos 10 s, porque el
+# intervalo R-R se acorta (de ~0.7 s a ~0.4 s): ~144 lpm frente a ~78 lpm. La media y la
+# desviación estándar del recorte son mayores en la taquicardia, ya que hay más complejos
+# QRS (picos grandes) por unidad de tiempo. Ambas señales tenían una fuerte componente de
+# 60 Hz (ruido de la red eléctrica) que dominaba el espectro; el filtro Notch la eliminó
+# sin deformar los picos R.
