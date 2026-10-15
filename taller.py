@@ -6,10 +6,11 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 import scipy.io as sio 
 from scipy import signal
 import cv2
-import nibabel as nib
+import nibabel as nib # Importamos esta librería para la manipulación del .nii
 
 # Creamos rutas de los archivos
 RUTA_CSV = "clinical_data.csv"
@@ -162,7 +163,7 @@ def analizar_csv():
 
 # Punto 2: procesamiento y comparación de las señales ECG
 def procesar_ecg(fc_csv):
-    # Instanciamos un objeto para el paciente sano y otro para el de taquicardia
+    # Creamos un objeto para el paciente sano y otro para el de taquicardia
     sano = cargar_mat(RUTA_ECG_SANO, "sano")
     taqui = cargar_mat(RUTA_ECG_TAQUI, "taquicardia")
     sano.filtrar_notch()
@@ -175,5 +176,99 @@ def procesar_ecg(fc_csv):
     fig, axs = plt.subplots(2, 1, figsize=(12, 7), sharex=True)
     sano.graficar(canal, inicio, fin, ax=axs[0])
     taqui.graficar(canal, inicio, fin, ax=axs[1])
+    plt.tight_layout()
+    plt.show()
+
+    # Espectro de potencia (muestra por qué se filtra a 60 Hz)
+    fig, ax = plt.subplots(figsize=(10, 3.5))
+    for s, color in ((sano, "tab:blue"), (taqui, "tab:orange")):
+        f1, p1 = signal.welch(s.recortar(canal, filtrada=False), s.ver_fs(), nperseg=1024)
+        f2, p2 = signal.welch(s.recortar(canal, filtrada=True), s.ver_fs(), nperseg=1024)
+        ax.semilogy(f1, p1, color=color, alpha=0.4, label=f'{s.label} original')
+        ax.semiology(f2, p2, color=color, label=f'{s.label} filtrada')
+    ax.axvline(60, color="k", ls="--", lw=0.8)
+    ax.set_xlim(0, 100)
+    ax.set_xlabel("Frecuencia (Hz)")
+    ax.set_ylabel("Densidad de potencia")
+    ax.set_title("Espectro antes y después del filtro Notch (línea punteada: 60 Hz)")
+    ax.legend(fontsize=8)
+    plt.tight_layout()
+    plt.show()
+
+    # Comparación estadística entre ambos pacientes
+    est = {"Sano": sano.estadisticas(canal, inicio, fin), 
+           "Taquicardia": taqui.estadisticas(canal, inicio, fin)}
+    print("=== Estadísticas del recorte (filtrado) ===")
+    print(pd.DataFrame(est).T.round(4), "\n")
+
+    # Variable derivada (frecuencia cardiaca estimada desde el ECG)
+    n_s, fc_s, rr_s = estimar_fc(sano)
+    n_t, fc_t, rr_t = estimar_fc(taqui)
+    print("=== Frecuencia cardiaca estimada desde el ECG ===")
+    print(f'Sano:       {n_s} latidos, {fc_s:.0f} lpm, intervalo R-R medio = {rr_s:.2f} s')
+    print(f'Taquicardia {n_t} latidos, {fc_t:.0f} lpm, intervalo R-R medio = {rr_t:.2f} s\n ')
+
+    print("=== Frecuencia cardiaca promedio en el CSV ===")
+    print(fc_csv.round(1), "\n")
+
+    return est, fc_s, fc_t
+
+# Punto 3: manipulación de la imagen de resonancia con OpenCV
+def procesar_imagen():
+    # Aquí cargamos el archivo .nii (DESCOMPRIMIDO) con la librería nibabel
+    volumen = nib.load(RUTA_MRI)
+    vol = np.asarray(volumen.dataobj, dtype=np.float32)
+    print("Forma del volumen 3D:", vol.shape)
+
+    # Hacemos un corte axial central, rotado para verlo en su orientación habitual
+    corte = np.rot90(vol[:, :, vol.shape[2] // 2])
+
+    # Pasamos a uint8 (0-255) porque OpenCV lo exige para los filtros tipo CLAHE, Canny y umbralización para adaptar el tipo de dato
+    img = cv2.normalize(corte, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+
+    # Sección de filtros
+    # Filtrado gaussiano (para reducir el ruido antes de segmentar)
+    blurred = cv2.GaussianBlur(img, (7, 7), 1.5)
+
+    # CLAHE (hace la ecualización adaptativa del histograma, la idea es diferenciar materia gris, blanca y LCR)
+    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
+    enhaced = clahe.apply(img)
+
+    # Umbralización adaptativa (para separar el tejido y fondo)
+    threshold = cv2.adaptativeThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+
+    # Canny (para delinear el cráneo, los ventrículos y los surcos)
+    edges = cv2.Canny(img, 50, 120)
+
+    # Apertura morfológica (para eliminar puntos de ruido y conservar estructuras grandes)
+    kernel = np.ones((2, 2), np.uint8)
+    opened = cv2.morphologyEx(threshold, cv2.MORPH_OPEN, kernel)
+
+    # Transformación geométrica (rotamos 90 grados)
+    filas, cols = img.shape
+    M = cv2.getRotationMatrix2D((cols / 2, filas / 2), 90, 1)
+    rotated = cv2.warpAffine(img, M, (cols, filas))
+
+    # Cierre morfológico (para cerrar huecos y obtener contornos continuos)
+    closed = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel)
+
+    # Graficado de imagenes
+    resultados =[
+        ("Corte Axial original", img),
+        ("Gaussiano", blurred),
+        ("CLAHE", enhaced),
+        ("Umbral adaptativo", threshold),
+        ("Bordes Canny", edges),
+        ("Apertura morfológica", opened),
+        ("Rotación 90 grados", rotated),
+        ("Cierre sobre bordes", closed),
+    ]
+
+    fig, axs = plt.subplots(2, 4, figsize=(16, 8.5))
+    for ax, (titulo, imagen) in zip(axs.ravel(), resultados):
+        ax.imshow(imagen, cmap="gray")
+        ax.set_title(titulo, fontsize=11)
+        ax.axis("off")
+    plt.subtitle("Transformaciones aplicadas a un corte de resonancia magnética", fontsize=14)
     plt.tight_layout()
     plt.show()
