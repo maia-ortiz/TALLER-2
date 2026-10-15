@@ -70,6 +70,9 @@ class Signal:
 
         ax.plot(t, self.recortar(canal, inicio, fin, filtrada=False), 
                 color="gray", alpha=0.6, label="Original (con ruido de 60 Hz)")
+        if self.__filtrada is not None:
+            ax.plot(t, self.recortar(canal, inicio, fin, filtrada=True),
+                    color="crimson", label="Filtrada (Notch 60 Hz)")
 
         ax.set_title(f'ECG - Paciente {self.label}')
         ax.set_xlabel("Tiempo (s)")
@@ -185,7 +188,7 @@ def procesar_ecg(fc_csv):
         f1, p1 = signal.welch(s.recortar(canal, filtrada=False), s.ver_fs(), nperseg=1024)
         f2, p2 = signal.welch(s.recortar(canal, filtrada=True), s.ver_fs(), nperseg=1024)
         ax.semilogy(f1, p1, color=color, alpha=0.4, label=f'{s.label} original')
-        ax.semiology(f2, p2, color=color, label=f'{s.label} filtrada')
+        ax.semilogy(f2, p2, color=color, label=f'{s.label} filtrada')
     ax.axvline(60, color="k", ls="--", lw=0.8)
     ax.set_xlim(0, 100)
     ax.set_xlabel("Frecuencia (Hz)")
@@ -235,7 +238,7 @@ def procesar_imagen():
     enhaced = clahe.apply(img)
 
     # Umbralización adaptativa (para separar el tejido y fondo)
-    threshold = cv2.adaptativeThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
+    threshold = cv2.adaptiveThreshold(img, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
 
     # Canny (para delinear el cráneo, los ventrículos y los surcos)
     edges = cv2.Canny(img, 50, 120)
@@ -269,7 +272,7 @@ def procesar_imagen():
         ax.imshow(imagen, cmap="gray")
         ax.set_title(titulo, fontsize=11)
         ax.axis("off")
-    plt.subtitle("Transformaciones aplicadas a un corte de resonancia magnética", fontsize=14)
+    plt.suptitle("Transformaciones aplicadas a un corte de resonancia magnética", fontsize=14)
     plt.tight_layout()
     plt.show()
 
@@ -278,10 +281,10 @@ def mostrar_resumen(est, fc_s, fc_t, fc_csv, corr):
     print("=" * 70)
     print("RESUMEN PARA LAS CONCLUSIONES")
     print("=" * 70)
-    print(f"ECG sano:        media = {est['sano']['media']:.3f} mV, "
-          f"desv. = {est['sano']['desv_std']:.3f} mV, FC = {fc_s:.0f} lpm")
-    print(f"ECG taquicardia: media = {est['taquicardia']['media']:.3f} mV, "
-          f"desv. = {est['taquicardia']['desv_std']:.3f} mV, FC = {fc_t:.0f} lpm")
+    print(f"ECG Sano:        media = {est['Sano']['media']:.3f} mV, "
+          f"desv. = {est['Sano']['desv_std']:.3f} mV, FC = {fc_s:.0f} lpm")
+    print(f"ECG Taquicardia: media = {est['Taquicardia']['media']:.3f} mV, "
+          f"desv. = {est['Taquicardia']['desv_std']:.3f} mV, FC = {fc_t:.0f} lpm")
     print(f"FC promedio en CSV -> Sano: {fc_csv['Sano']:.0f} lpm | "
           f"Taquicardia: {fc_csv['Taquicardia']:.0f} lpm")
     print(f"Correlación FC-PAM: {corr.loc['Frecuencia_Cardiaca', 'PAM']:.2f} | "
