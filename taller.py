@@ -92,7 +92,7 @@ def estimar_fc(sig, canal=0):
     intervalo_rr = float(np.mean(np.diff(picos) / sig.ver_fs()))
     return len(picos), len(picos) * 60 / duracion, intervalo_rr
 
-# Punto 1: lectura y exploración de los datos clínicos
+# Punto 1 - lectura y exploración de los datos clínicos
 def analizar_csv():
     df = pd.read_csv(RUTA_CSV)
 
@@ -161,7 +161,7 @@ def analizar_csv():
     fc_csv = df.groupby("Diagnóstico")["Frecuencia_Cardiaca"].mean()
     return df, corr, fc_csv
 
-# Punto 2: procesamiento y comparación de las señales ECG
+# Punto 2 - procesamiento y comparación de las señales ECG
 def procesar_ecg(fc_csv):
     # Creamos un objeto para el paciente sano y otro para el de taquicardia
     sano = cargar_mat(RUTA_ECG_SANO, "sano")
@@ -179,7 +179,7 @@ def procesar_ecg(fc_csv):
     plt.tight_layout()
     plt.show()
 
-    # Espectro de potencia (muestra por qué se filtra a 60 Hz)
+    # Espectro de potencia (para mostrar por qué la señal se filtra a 60 Hz)
     fig, ax = plt.subplots(figsize=(10, 3.5))
     for s, color in ((sano, "tab:blue"), (taqui, "tab:orange")):
         f1, p1 = signal.welch(s.recortar(canal, filtrada=False), s.ver_fs(), nperseg=1024)
@@ -213,7 +213,7 @@ def procesar_ecg(fc_csv):
 
     return est, fc_s, fc_t
 
-# Punto 3: manipulación de la imagen de resonancia con OpenCV
+# Punto 3 - manipulación de la imagen de resonancia con OpenCV
 def procesar_imagen():
     # Aquí cargamos el archivo .nii (DESCOMPRIMIDO) con la librería nibabel
     volumen = nib.load(RUTA_MRI)
@@ -273,7 +273,7 @@ def procesar_imagen():
     plt.tight_layout()
     plt.show()
 
-# Punto 4
+# Punto 4 - resumen numérico para las conclusiones
 def mostrar_resumen(est, fc_s, fc_t, fc_csv, corr):
     print("=" * 70)
     print("RESUMEN PARA LAS CONCLUSIONES")
@@ -305,3 +305,22 @@ if __name__ == "__main__":
 # QRS (picos grandes) por unidad de tiempo. Ambas señales tenían una fuerte componente de
 # 60 Hz (ruido de la red eléctrica) que dominaba el espectro; el filtro Notch la eliminó
 # sin deformar los picos R.
+
+# Encontramos posibles relaciones entre los datos clínicos y las variables derivadas,
+# la FC estimada desde el ECG sigue la tendencia del CSV (70 lpm en pacientes sanos y 124
+# en pacientes con taquicardia en promedio), aunque los valores no coinciden exactamente porque son
+# datos simulados y el ECG es de un solo paciente. 
+# 
+# En el CSV la FC se correlaciona fuerte y negativamente con la presión arterial media (-0.94) y 
+# positivamente con la glucosa más alta (0.92), es decir, los pacientes con taquicardia tienen la 
+# presión arterial media más baja (~83 vs ~96) y glucosa más alta (~107 vs ~89). Como los grupos no se 
+# solapan en FC las correlaciones reflejan sobre todo la diferencia entre diagnósticos, con respecto a 
+# la edad esta se correlaciona débilmente con las demás variables (es una asociación con datos 
+# simulados, no prueba causalidad).
+
+# Con respecto a los filtros y transformaciones de imagen, el gaussiano (7x7, sigma 1.5) suaviza el ruido
+# pero difumina los bordes finos, CLAHE aumenta el contraste local y hace más visibles las estructuras internas,
+# la umbralización adaptativa resalta la textura local (los surcos y bordes del cerebro), la apertura con kernel
+# 2x2 solo elimina algunos puntos aislados, Canny delinea el cráneo y los surcos, y el cierre engrosa y conecta los bordes
+# cercanos, por último, la rotación a 90 grados cambia la orientación de la imagen (una aplicación útil si se desea hacer
+# estudios), pero recorta los bordes porque el lienzo no es cuadrado. 
