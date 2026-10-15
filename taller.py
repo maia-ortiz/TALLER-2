@@ -209,7 +209,7 @@ def procesar_ecg(fc_csv):
     n_t, fc_t, rr_t = estimar_fc(taqui)
     print("=== Frecuencia cardiaca estimada desde el ECG ===")
     print(f'Sano:       {n_s} latidos, {fc_s:.0f} lpm, intervalo R-R medio = {rr_s:.2f} s')
-    print(f'Taquicardia {n_t} latidos, {fc_t:.0f} lpm, intervalo R-R medio = {rr_t:.2f} s\n ')
+    print(f'Taquicardia: {n_t} latidos, {fc_t:.0f} lpm, intervalo R-R medio = {rr_t:.2f} s\n ')
 
     print("=== Frecuencia cardiaca promedio en el CSV ===")
     print(fc_csv.round(1), "\n")
